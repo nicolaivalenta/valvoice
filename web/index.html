@@ -15,9 +15,12 @@
 <style>
   :root {
     --yellow: #ffdb70;
+    --yellow-2: #ffe493;
     --yellow-dim: #e8c055;
     --bg: #0a0a0a;
     --bg-2: #121212;
+    --panel: #1a1a1a;
+    --panel-2: #202020;
     --fg: #f5f5f5;
     --fg-muted: #9a9a9a;
     --fg-dim: #5a5a5a;
@@ -41,19 +44,17 @@
     overflow-x: hidden;
   }
 
-  /* Subtle radial glow anchored behind the V mark */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
     background:
-      radial-gradient(ellipse 720px 480px at 18% 38%, rgba(255, 219, 112, 0.14), transparent 60%),
-      radial-gradient(ellipse 600px 400px at 80% 70%, rgba(255, 219, 112, 0.04), transparent 70%);
+      radial-gradient(ellipse 900px 520px at 25% 20%, rgba(255, 219, 112, 0.11), transparent 60%),
+      radial-gradient(ellipse 720px 460px at 78% 78%, rgba(255, 219, 112, 0.05), transparent 70%);
     pointer-events: none;
     z-index: 0;
   }
 
-  /* Grain overlay — reads as tactile texture, not a pattern */
   body::after {
     content: "";
     position: fixed;
@@ -68,15 +69,16 @@
   .page {
     position: relative;
     z-index: 2;
-    max-width: 1120px;
+    max-width: 1180px;
     margin: 0 auto;
-    padding: 28px 32px;
+    padding: 24px 32px 60px;
     min-height: 100vh;
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    gap: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
   }
 
+  /* ── Header ──────────────────────────────────────── */
   header {
     display: flex;
     justify-content: space-between;
@@ -112,89 +114,30 @@
 
   /* ── Hero ────────────────────────────────────────── */
   .hero {
-    display: grid;
-    grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.35fr);
-    gap: 56px;
-    align-items: center;
-    padding: 8px 0;
-  }
-
-  .mark-wrap {
-    position: relative;
-    width: 340px;
-    height: 340px;
-    justify-self: start;
-    align-self: center;
-    display: grid;
-    place-items: center;
-  }
-  .mark {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(150deg, #ffe493 0%, var(--yellow) 46%, var(--yellow-dim) 100%);
-    border-radius: 26%;
-    display: grid;
-    place-items: center;
-    font-family: var(--display);
-    font-size: 220px;
-    color: #000;
-    box-shadow:
-      0 40px 80px -30px rgba(255, 219, 112, 0.35),
-      0 0 0 1px rgba(255, 219, 112, 0.15);
-    animation: breathe 4.8s ease-in-out infinite;
-  }
-  .mark span {
-    display: block;
-    transform: translateY(-0.05em);
-  }
-  @keyframes breathe {
-    0%, 100% { transform: scale(1); box-shadow: 0 40px 80px -30px rgba(255,219,112,0.35), 0 0 0 1px rgba(255,219,112,0.15); }
-    50%      { transform: scale(1.015); box-shadow: 0 48px 96px -28px rgba(255,219,112,0.45), 0 0 0 1px rgba(255,219,112,0.22); }
-  }
-
-  /* Concentric rings pulsing out — suggest voice amplitude without being busy */
-  .mark-wrap::before, .mark-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 26%;
-    border: 1px solid rgba(255, 219, 112, 0.2);
-    animation: ring 3.2s ease-out infinite;
-    pointer-events: none;
-  }
-  .mark-wrap::after { animation-delay: 1.6s; }
-  @keyframes ring {
-    0%   { transform: scale(0.82); opacity: 0; }
-    20%  { opacity: 0.55; }
-    100% { transform: scale(1.18); opacity: 0; }
-  }
-
-  .copy {
+    text-align: left;
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    max-width: 560px;
+    gap: 22px;
+    max-width: 640px;
   }
 
   .wordmark {
     font-family: var(--display);
-    font-size: clamp(44px, 6vw, 72px);
+    font-size: clamp(56px, 8vw, 96px);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.04em;
     color: var(--fg);
-    margin-bottom: 4px;
   }
-  .wordmark .v-accent { color: var(--yellow); }
+  .wordmark .accent { color: var(--yellow); }
 
   .tagline {
-    font-size: clamp(16px, 1.4vw, 19px);
+    font-size: clamp(17px, 1.5vw, 20px);
     line-height: 1.45;
     color: var(--fg-muted);
     font-weight: 400;
-    max-width: 460px;
+    max-width: 480px;
   }
 
-  /* ── Install block ───────────────────────────────── */
   .install {
     position: relative;
     background: linear-gradient(180deg, #161616 0%, #0e0e0e 100%);
@@ -205,6 +148,7 @@
     align-items: center;
     gap: 14px;
     box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 20px 50px -20px rgba(0,0,0,0.6);
+    max-width: 560px;
   }
   .install::before {
     content: "$";
@@ -269,13 +213,12 @@
     vertical-align: 1px;
   }
 
-  /* ── Feature chips ───────────────────────────────── */
   .features {
     list-style: none;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 6px;
+    margin-top: 4px;
   }
   .features li {
     font-family: var(--mono);
@@ -292,6 +235,243 @@
     margin-right: 7px;
     font-size: 8px;
     vertical-align: 2px;
+  }
+
+  /* ── Showcase ────────────────────────────────────── */
+  .showcase {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 80px; /* room for the overlapping pill */
+  }
+
+  .window {
+    width: 100%;
+    max-width: 880px;
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.04) inset,
+      0 60px 120px -40px rgba(0,0,0,0.7),
+      0 30px 60px -20px rgba(0,0,0,0.5);
+    overflow: hidden;
+  }
+
+  .titlebar {
+    height: 36px;
+    background: #161616;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding-left: 14px;
+    gap: 8px;
+  }
+  .dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #3a3a3a;
+  }
+  .dot.red { background: #ff5f56; }
+  .dot.yellow { background: #ffbd2e; }
+  .dot.green { background: #27c93f; }
+
+  .app-body {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    height: 440px;
+  }
+
+  .sidebar {
+    background: #101010;
+    border-right: 1px solid var(--border);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 12.5px;
+  }
+  .sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px 12px;
+    font-weight: 600;
+    color: var(--fg);
+  }
+  .sidebar-brand .s-tile {
+    width: 18px; height: 18px;
+    background: var(--yellow);
+    border-radius: 5px;
+    display: grid; place-items: center;
+    font-family: var(--display);
+    color: #000;
+    font-size: 13px;
+    line-height: 0;
+    padding-bottom: 2px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--fg-muted);
+    cursor: default;
+  }
+  .nav-item .i {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    background: currentColor;
+    opacity: 0.6;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    mask-size: contain;
+  }
+  /* svg-as-mask for nav icons */
+  .nav-item .i.gauge   { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='5.5' fill='none' stroke='black' stroke-width='1.5'/><line x1='8' y1='8' x2='11' y2='5.5' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
+  .nav-item .i.wave    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3 8 Q5 3 7 8 T11 8 T15 8' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
+  .nav-item .i.doc     { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 2h6l2 2v10H4z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/></svg>"); }
+  .nav-item .i.brain   { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='6' cy='8' r='3' fill='none' stroke='black' stroke-width='1.5'/><circle cx='10' cy='8' r='3' fill='none' stroke='black' stroke-width='1.5'/></svg>"); }
+  .nav-item .i.shield  { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 2l5 2v4c0 3-2.5 5-5 6-2.5-1-5-3-5-6V4z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/></svg>"); }
+  .nav-item .i.mic     { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='6' y='2' width='4' height='7' rx='2' fill='none' stroke='black' stroke-width='1.5'/><path d='M3 8v1a5 5 0 0010 0V8M8 14v-2' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
+  .nav-item .i.book    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3 3h7a2 2 0 012 2v9H5a2 2 0 01-2-2z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/></svg>"); }
+  .nav-item .i.gear    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='2' fill='none' stroke='black' stroke-width='1.5'/><path d='M8 2v2M8 12v2M14 8h-2M4 8H2M12.2 3.8l-1.4 1.4M5.2 10.8L3.8 12.2M12.2 12.2l-1.4-1.4M5.2 5.2L3.8 3.8' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
+
+  .nav-item.active {
+    background: var(--yellow);
+    color: #000;
+    font-weight: 600;
+  }
+  .nav-item.active .i { opacity: 1; }
+
+  .content {
+    padding: 20px;
+    overflow: hidden;
+  }
+  .hero-banner {
+    background: linear-gradient(135deg, var(--yellow-2) 0%, var(--yellow) 50%, var(--yellow-dim) 100%);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    color: #000;
+  }
+  .hero-banner .t1 {
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0.72;
+    margin-bottom: 4px;
+  }
+  .hero-banner .t2 {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: var(--sans);
+    line-height: 1.1;
+  }
+  .hero-banner .t2 strong {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: 0.01em;
+  }
+  .hero-banner .sub {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.65;
+    margin-top: 6px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .card {
+    background: var(--panel);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .card .c-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .card .c-icon {
+    width: 22px; height: 22px;
+    border-radius: 5px;
+    display: grid; place-items: center;
+  }
+  .card .c-icon.purple { background: rgba(170, 120, 255, 0.2); color: #c4a0ff; }
+  .card .c-icon.blue   { background: rgba(255, 219, 112, 0.18); color: var(--yellow); }
+  .card .c-icon.orange { background: rgba(255, 152, 70, 0.2); color: #ffb070; }
+  .card .c-icon.yellow { background: rgba(255, 219, 112, 0.2); color: var(--yellow); }
+  .card .c-icon svg { width: 12px; height: 12px; }
+  .card .c-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--fg-muted);
+  }
+  .card .c-value {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--fg);
+    letter-spacing: -0.015em;
+    margin-bottom: 2px;
+  }
+  .card .c-sub {
+    font-size: 10.5px;
+    color: var(--fg-dim);
+  }
+
+  /* ── Mini recorder pill (overlapping) ────────────── */
+  .pill {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #000;
+    border-radius: 22px;
+    padding: 10px 20px;
+    display: flex;
+    gap: 2.5px;
+    align-items: center;
+    height: 44px;
+    box-shadow:
+      0 20px 40px -10px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(255,255,255,0.06);
+  }
+
+  .pill-bar {
+    width: 3px;
+    background: var(--yellow);
+    border-radius: 3px;
+    transform-origin: center;
+    animation: talk 1.4s ease-in-out infinite;
+  }
+  /* 15 bars with staggered phase offsets so the whole pill ripples like speech */
+  .pill-bar:nth-child(1)  { animation-delay: -0.00s; }
+  .pill-bar:nth-child(2)  { animation-delay: -0.18s; }
+  .pill-bar:nth-child(3)  { animation-delay: -0.36s; }
+  .pill-bar:nth-child(4)  { animation-delay: -0.04s; }
+  .pill-bar:nth-child(5)  { animation-delay: -0.22s; }
+  .pill-bar:nth-child(6)  { animation-delay: -0.40s; }
+  .pill-bar:nth-child(7)  { animation-delay: -0.08s; }
+  .pill-bar:nth-child(8)  { animation-delay: -0.26s; }
+  .pill-bar:nth-child(9)  { animation-delay: -0.44s; }
+  .pill-bar:nth-child(10) { animation-delay: -0.12s; }
+  .pill-bar:nth-child(11) { animation-delay: -0.30s; }
+  .pill-bar:nth-child(12) { animation-delay: -0.48s; }
+  .pill-bar:nth-child(13) { animation-delay: -0.16s; }
+  .pill-bar:nth-child(14) { animation-delay: -0.34s; }
+  .pill-bar:nth-child(15) { animation-delay: -0.52s; }
+
+  @keyframes talk {
+    0%, 100% { height: 22%; }
+    20%      { height: 85%; }
+    40%      { height: 50%; }
+    60%      { height: 95%; }
+    80%      { height: 35%; }
   }
 
   /* ── Footer ──────────────────────────────────────── */
@@ -313,30 +493,38 @@
 
   /* ── Mobile ──────────────────────────────────────── */
   @media (max-width: 820px) {
-    .page { padding: 20px 20px; }
-    .hero {
-      grid-template-columns: 1fr;
-      gap: 32px;
-      text-align: left;
-    }
-    .mark-wrap { width: 200px; height: 200px; }
-    .mark { font-size: 132px; }
-    .wordmark { font-size: 48px; }
-    .install code { font-size: 12.5px; }
+    .page { padding: 20px 20px 50px; gap: 32px; }
+    .wordmark { font-size: 52px; }
+    .app-body { height: 340px; grid-template-columns: 140px 1fr; }
+    .hero-banner .t2 { font-size: 16px; }
+    .hero-banner .t2 strong { font-size: 19px; }
+    .cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .card { padding: 11px 13px; }
+    .card .c-value { font-size: 18px; }
+    .showcase { padding-bottom: 60px; }
+    .pill { bottom: 28px; height: 38px; padding: 8px 15px; }
     .copy-btn span { display: none; }
-    .helper { font-size: 12.5px; }
   }
 
-  @media (max-width: 480px) {
-    .mark-wrap { width: 150px; height: 150px; }
-    .mark { font-size: 100px; }
+  @media (max-width: 540px) {
+    .wordmark { font-size: 42px; }
+    .sidebar { padding: 10px 6px; }
+    .sidebar-brand { font-size: 11px; gap: 6px; padding: 4px 8px 10px; }
+    .nav-item { font-size: 11px; padding: 5px 8px; gap: 7px; }
+    .content { padding: 14px; }
+    .hero-banner { padding: 14px 16px; }
+    .hero-banner .t2 { font-size: 14px; }
+    .hero-banner .t2 strong { font-size: 16px; }
+    .card .c-title { font-size: 10px; }
+    .card .c-value { font-size: 16px; }
+    .pill { padding: 7px 13px; height: 34px; }
+    .pill-bar { width: 2.5px; }
     .features { gap: 6px; }
     .features li { font-size: 11px; padding: 5px 9px; }
   }
 
-  /* Respect reduced-motion */
   @media (prefers-reduced-motion: reduce) {
-    .mark, .mark-wrap::before, .mark-wrap::after { animation: none; }
+    .pill-bar { animation: none; height: 50%; }
   }
 </style>
 </head>
@@ -351,35 +539,120 @@
   </header>
 
   <section class="hero">
-    <div class="mark-wrap" aria-hidden="true">
-      <div class="mark"><span>V</span></div>
+    <h1 class="wordmark">Val<span class="accent">Voice</span></h1>
+    <p class="tagline">Local-first dictation for macOS.<br>Hold Caps Lock, speak, release.</p>
+
+    <div class="install" role="region" aria-label="Install command">
+      <code id="install-cmd">curl -fsSL https://valvoice.app/install | bash</code>
+      <button class="copy-btn" id="copy-btn" aria-label="Copy install command">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="9" height="9" rx="1.5"/>
+          <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
+        </svg>
+        <span>Copy</span>
+      </button>
     </div>
 
-    <div class="copy">
-      <h1 class="wordmark">Val<span class="v-accent">Voice</span></h1>
-      <p class="tagline">Local-first dictation for macOS.<br>Hold Caps Lock, speak, release.</p>
+    <p class="helper">
+      Paste into Terminal.
+      Don't know where that is? <span class="kbd">⌘</span><span class="kbd">Space</span>, type <em>Terminal</em>, press <span class="kbd">↵</span>.
+    </p>
 
-      <div class="install" role="region" aria-label="Install command">
-        <code id="install-cmd">curl -fsSL https://valvoice.app/install | bash</code>
-        <button class="copy-btn" id="copy-btn" aria-label="Copy install command">
-          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="4" width="9" height="9" rx="1.5"/>
-            <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
-          </svg>
-          <span>Copy</span>
-        </button>
+    <ul class="features">
+      <li>100% offline</li>
+      <li>Press Caps Lock</li>
+      <li>Works everywhere on Mac</li>
+    </ul>
+  </section>
+
+  <!-- ───── Product showcase ────────────────────────── -->
+  <section class="showcase" aria-label="ValVoice app preview">
+    <div class="window">
+      <div class="titlebar">
+        <div class="dot red"></div>
+        <div class="dot yellow"></div>
+        <div class="dot green"></div>
       </div>
 
-      <p class="helper">
-        Paste into Terminal.
-        Don't know where that is? <span class="kbd">⌘</span><span class="kbd">Space</span>, type <em>Terminal</em>, press <span class="kbd">↵</span>.
-      </p>
+      <div class="app-body">
+        <aside class="sidebar">
+          <div class="sidebar-brand">
+            <div class="s-tile">V</div>
+            <span>ValVoice</span>
+          </div>
+          <div class="nav-item active"><span class="i gauge"></span>Dashboard</div>
+          <div class="nav-item"><span class="i wave"></span>Transcribe Audio</div>
+          <div class="nav-item"><span class="i doc"></span>History</div>
+          <div class="nav-item"><span class="i brain"></span>AI Models</div>
+          <div class="nav-item"><span class="i shield"></span>Permissions</div>
+          <div class="nav-item"><span class="i mic"></span>Audio Input</div>
+          <div class="nav-item"><span class="i book"></span>Dictionary</div>
+          <div class="nav-item"><span class="i gear"></span>Settings</div>
+        </aside>
 
-      <ul class="features">
-        <li>100% offline</li>
-        <li>Press Caps Lock</li>
-        <li>Works everywhere on Mac</li>
-      </ul>
+        <div class="content">
+          <div class="hero-banner">
+            <div class="t1">Time Saved</div>
+            <div class="t2">You have saved <strong>2 hours, 21 minutes</strong> with ValVoice</div>
+            <div class="sub">Dictated 6,535 words across 58 sessions.</div>
+          </div>
+
+          <div class="cards">
+            <div class="card">
+              <div class="c-row">
+                <div class="c-icon purple">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="6" y="2" width="4" height="7" rx="2"/><path d="M3 8v1a5 5 0 0010 0V8M8 14v-2" stroke-linecap="round"/></svg>
+                </div>
+                <div class="c-title">Sessions Recorded</div>
+              </div>
+              <div class="c-value">58</div>
+              <div class="c-sub">ValVoice sessions completed</div>
+            </div>
+
+            <div class="card">
+              <div class="c-row">
+                <div class="c-icon blue">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M3 4h10M3 8h10M3 12h7"/></svg>
+                </div>
+                <div class="c-title">Words Dictated</div>
+              </div>
+              <div class="c-value">6,535</div>
+              <div class="c-sub">words generated</div>
+            </div>
+
+            <div class="card">
+              <div class="c-row">
+                <div class="c-icon yellow">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="5"/><path d="M8 8l3-3" stroke-linecap="round"/></svg>
+                </div>
+                <div class="c-title">Words Per Minute</div>
+              </div>
+              <div class="c-value">145.0</div>
+              <div class="c-sub">ValVoice vs. typing by hand</div>
+            </div>
+
+            <div class="card">
+              <div class="c-row">
+                <div class="c-icon orange">
+                  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="13" height="8" rx="1.5"/><path d="M4 7h1M7 7h1M10 7h1M4 10h8" stroke-linecap="round"/></svg>
+                </div>
+                <div class="c-title">Keystrokes Saved</div>
+              </div>
+              <div class="c-value">32,675</div>
+              <div class="c-sub">fewer keystrokes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overlapping mini recorder -->
+    <div class="pill" aria-hidden="true">
+      <div class="pill-bar"></div><div class="pill-bar"></div><div class="pill-bar"></div>
+      <div class="pill-bar"></div><div class="pill-bar"></div><div class="pill-bar"></div>
+      <div class="pill-bar"></div><div class="pill-bar"></div><div class="pill-bar"></div>
+      <div class="pill-bar"></div><div class="pill-bar"></div><div class="pill-bar"></div>
+      <div class="pill-bar"></div><div class="pill-bar"></div><div class="pill-bar"></div>
     </div>
   </section>
 
@@ -410,7 +683,6 @@
           svg.innerHTML = originalSVG;
         }, 1800);
       } catch (err) {
-        // Clipboard API failed — fall back to selection
         const range = document.createRange();
         range.selectNode(cmd);
         const sel = window.getSelection();
