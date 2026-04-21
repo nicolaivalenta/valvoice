@@ -1,0 +1,78 @@
+name: Release
+
+# Triggered by pushing a version tag like v0.1.0 — builds ValVoice.app, zips it,
+# and attaches it to a GitHub Release. The website's install.sh pulls from this.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build (Release, no signing)
+        run: |
+          xcodebuild \
+            -project VoiceInk.xcodeproj \
+            -scheme VoiceInk \
+            -configuration Release \
+            -derivedDataPath ./build \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Rename bundle + patch Info.plist
+        run: |
+          APP_SRC="./build/Build/Products/Release/VoiceInk.app"
+          APP_DST="./build/Build/Products/Release/ValVoice.app"
+          mv "$APP_SRC" "$APP_DST"
+          # CFBundleName defaults to PRODUCT_NAME (VoiceInk); override explicitly
+          /usr/libexec/PlistBuddy -c "Add :CFBundleName string ValVoice" "$APP_DST/Contents/Info.plist" 2>/dev/null || \
+            /usr/libexec/PlistBuddy -c "Set :CFBundleName ValVoice" "$APP_DST/Contents/Info.plist"
+
+      - name: Ad-hoc sign
+        run: codesign --force --deep --sign - ./build/Build/Products/Release/ValVoice.app
+
+      - name: Zip
+        run: |
+          cd ./build/Build/Products/Release
+          # ditto preserves symlinks/resource forks macOS expects
+          ditto -c -k --keepParent --sequesterRsrc ValVoice.app ../../../../ValVoice.zip
+
+      - name: Verify artifact
+        run: |
+          ls -la ValVoice.zip
+          unzip -l ValVoice.zip | head
+
+      - name: Create / update release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ValVoice.zip
+          body: |
+            Download `ValVoice.zip`, unzip, and move `ValVoice.app` to `/Applications`.
+
+            **Or install via Terminal:**
+
+            ```
+            curl -fsSL https://valvoice.app/install | bash
+            ```
+          draft: false
+          prerelease: false
