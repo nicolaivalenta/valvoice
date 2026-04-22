@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Wrangler Pages (web)",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["wrangler", "pages", "dev", "web", "--port", "8788"],
+      "port": 8788
+    },
+    {
+      "name": "Python HTTP (web)",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8000", "--directory", "web"],
+      "port": 8000
+    }
+  ]
+}
