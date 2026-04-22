@@ -142,18 +142,32 @@
     max-width: 520px;
   }
 
+  .scroll-hint-wrap {
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .scroll-hint-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--yellow);
+  }
   .scroll-hint {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    align-self: center;
     width: 34px;
     height: 34px;
     border-radius: 50%;
     border: 1px solid rgba(255, 219, 112, 0.25);
     color: var(--yellow);
     animation: scrollBounce 1.9s ease-in-out infinite;
-    cursor: pointer;
     background: transparent;
   }
   .scroll-hint svg { width: 14px; height: 14px; }
@@ -769,10 +783,13 @@
     </div>
   </section>
 
-  <a href="#install" class="scroll-hint" aria-label="Scroll to install instructions">
-    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="4 6 8 11 12 6"/>
-    </svg>
+  <a href="#install" class="scroll-hint-wrap" aria-label="Scroll to install instructions">
+    <span class="scroll-hint-label">Install now</span>
+    <span class="scroll-hint">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="4 6 8 11 12 6"/>
+      </svg>
+    </span>
   </a>
 
   <!-- ───── How to download ─────────────────────────── -->
