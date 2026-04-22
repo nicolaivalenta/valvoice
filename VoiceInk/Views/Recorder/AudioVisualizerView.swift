@@ -163,26 +163,36 @@ final class WaveRippleDriver: ObservableObject {
         guard let sampler else { return }
         let raw = max(0, min(1, sampler()))
 
-        // Noise gate + soft compression — aggressive so small voice = visible motion
-        let gated = max(0, raw - 0.06) / 0.94
-        let compressed = pow(Double(gated), 0.4)  // gentler curve = more dynamic range in middle
+        // Noise gate: room tone & mic self-noise typically sit around 0.08–0.14 → set gate above that
+        let gateFloor: Float = 0.18
+        let gated = max(0, raw - gateFloor) / (1 - gateFloor)
+
+        // Gentler compression: pow(x, 0.7) instead of 0.4 — quiet stays quiet, loud still reaches 1
+        var compressed = pow(Double(gated), 0.7)
+
+        // Hard cutoff for anything that slips through — dead silence = dead flat
+        if compressed < 0.04 { compressed = 0 }
 
         // Attack/decay for wave amplitude
-        let attack: Float = 0.7
-        let decay: Float = 0.11
+        let attack: Float = 0.6
+        let decay: Float = 0.14
         let target = Float(compressed)
         smoothed = target > smoothed
             ? smoothed + (target - smoothed) * attack
             : smoothed + (target - smoothed) * decay
+        // Snap to zero when smoothed is tiny so decay doesn't leave a residual squiggle
+        if smoothed < 0.015 { smoothed = 0 }
         waveAmplitude = Double(smoothed)
 
-        // Phase scrolls faster when louder
-        phase += 0.14 + Double(smoothed) * 0.45
+        // Phase only scrolls when there's real signal (no idle drift)
+        if smoothed > 0 {
+            phase += 0.14 + Double(smoothed) * 0.45
+        }
 
-        // Ripple trigger: rising peak above threshold, debounced
+        // Ripple trigger: rising peak above threshold, debounced. Pull the bar up too.
         let now = Date().timeIntervalSince1970
         let delta = raw - previous
-        if delta > 0.14 && raw > 0.2 && (now - lastSpawnAt) > 0.08 {
+        if delta > 0.18 && raw > 0.3 && (now - lastSpawnAt) > 0.1 {
             ripples.append(RippleState(spawnTime: now, direction: -1, initialAmplitude: Double(raw)))
             ripples.append(RippleState(spawnTime: now, direction: 1, initialAmplitude: Double(raw)))
             lastSpawnAt = now
