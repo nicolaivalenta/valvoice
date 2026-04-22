@@ -454,7 +454,7 @@
     justify-content: center;
   }
 
-  /* Siri-style sine wave — SVG path scrolls left with keyframes */
+  /* Spline that wiggles in place — no scrolling, endpoints pinned at center */
   .pill-wave {
     position: absolute;
     left: 0;
@@ -462,16 +462,11 @@
     transform: translateY(-50%);
     width: 96px;
     height: 22px;
-    overflow: hidden;
+    pointer-events: none;
   }
   .pill-wave svg {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 192px;   /* 2x pill width so it can scroll seamlessly */
+    width: 100%;
     height: 100%;
-    animation: scrollWave 2.2s linear infinite, pulseAmp 2.6s ease-in-out infinite;
-    transform-origin: center;
   }
   .pill-wave path {
     fill: none;
@@ -479,25 +474,22 @@
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    filter: drop-shadow(0 0 4px rgba(255, 219, 112, 0.6));
-    animation: pulseStroke 2.6s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(255, 219, 112, 0.55));
+    animation: wiggleInPlace 1.6s ease-in-out infinite, strokePulse 2.6s ease-in-out infinite;
   }
 
-  @keyframes scrollWave {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+  /* Endpoints (x=0, x=96) stay at y=11. Interior control points move around. */
+  @keyframes wiggleInPlace {
+    0%   { d: path("M 0 11 C 8 11, 16 5,  24 10, 32 15, 40 7,  48 11, 56 15, 64 6,  72 13, 80 9,  88 12, 96 11"); }
+    25%  { d: path("M 0 11 C 8 11, 16 14, 24 9,  32 5,  40 13, 48 11, 56 8,  64 15, 72 6,  80 14, 88 9,  96 11"); }
+    50%  { d: path("M 0 11 C 8 11, 16 7,  24 14, 32 9,  40 16, 48 11, 56 14, 64 8,  72 16, 80 6,  88 13, 96 11"); }
+    75%  { d: path("M 0 11 C 8 11, 16 13, 24 6,  32 14, 40 8,  48 11, 56 6,  64 13, 72 9,  80 15, 88 7,  96 11"); }
+    100% { d: path("M 0 11 C 8 11, 16 5,  24 10, 32 15, 40 7,  48 11, 56 15, 64 6,  72 13, 80 9,  88 12, 96 11"); }
   }
-  @keyframes pulseAmp {
-    0%, 100% { transform: translateX(0) scaleY(0.25); }
-    25%      { transform: translateX(0) scaleY(1); }
-    50%      { transform: translateX(0) scaleY(0.5); }
-    75%      { transform: translateX(0) scaleY(0.85); }
-  }
-  @keyframes pulseStroke {
-    0%, 100% { stroke-width: 1.6; filter: drop-shadow(0 0 2px rgba(255,219,112,0.3)); }
-    25%      { stroke-width: 3.0; filter: drop-shadow(0 0 10px rgba(255,219,112,0.75)); }
-    50%      { stroke-width: 2.0; filter: drop-shadow(0 0 5px rgba(255,219,112,0.45)); }
-    75%      { stroke-width: 2.6; filter: drop-shadow(0 0 8px rgba(255,219,112,0.6)); }
+  @keyframes strokePulse {
+    0%, 100% { stroke-width: 1.8; filter: drop-shadow(0 0 3px rgba(255,219,112,0.4)); }
+    40%      { stroke-width: 2.6; filter: drop-shadow(0 0 8px rgba(255,219,112,0.7)); }
+    70%      { stroke-width: 2.2; filter: drop-shadow(0 0 5px rgba(255,219,112,0.55)); }
   }
 
   /* Ripple dots — two pairs, staggered so they feel event-driven */
@@ -701,13 +693,13 @@
       </div>
     </div>
 
-    <!-- Overlapping mini recorder — bending Siri-style wave + ripple dots -->
+    <!-- Overlapping mini recorder — spline wiggling in place + ripple dots -->
     <div class="pill" aria-hidden="true">
       <div class="pill-viz">
         <div class="pill-wave">
-          <svg viewBox="0 0 192 22" preserveAspectRatio="none">
-            <!-- Sine wave path: two wavelengths × 2 (so it loops seamlessly) -->
-            <path d="M 0 11 Q 12 -2 24 11 T 48 11 T 72 11 T 96 11 T 120 11 T 144 11 T 168 11 T 192 11" />
+          <svg viewBox="0 0 96 22" preserveAspectRatio="none">
+            <!-- Path animates via CSS keyframes — endpoints stay pinned at (0,11) and (96,11) -->
+            <path d="M 0 11 C 8 11, 16 5, 24 10, 32 15, 40 7, 48 11, 56 15, 64 6, 72 13, 80 9, 88 12, 96 11" />
           </svg>
         </div>
         <div class="pill-ripple r1"></div>
