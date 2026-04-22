@@ -114,16 +114,19 @@
 
   /* ── Hero ────────────────────────────────────────── */
   .hero {
-    text-align: left;
+    text-align: center;
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 22px;
-    max-width: 640px;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-top: 20px;
   }
 
   .wordmark {
     font-family: var(--display);
-    font-size: clamp(56px, 8vw, 96px);
+    font-size: clamp(64px, 9vw, 112px);
     line-height: 0.95;
     letter-spacing: 0.04em;
     color: var(--fg);
@@ -131,12 +134,94 @@
   .wordmark .accent { color: var(--yellow); }
 
   .tagline {
-    font-size: clamp(17px, 1.5vw, 20px);
+    font-size: clamp(18px, 1.6vw, 22px);
     line-height: 1.45;
     color: var(--fg-muted);
     font-weight: 400;
-    max-width: 480px;
+    max-width: 520px;
   }
+
+  /* ── Download section (appears after showcase) ───── */
+  .download {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    max-width: 640px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 20px;
+  }
+  .download-label {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--yellow);
+  }
+  .download-heading {
+    font-family: var(--sans);
+    font-size: clamp(22px, 2.4vw, 30px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+    max-width: 520px;
+  }
+
+  /* Sequential install steps */
+  .steps {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    max-width: 560px;
+    text-align: left;
+    counter-reset: step;
+    margin-top: 8px;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .step::before {
+    counter-increment: step;
+    content: counter(step);
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--yellow);
+    color: #000;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+  }
+  .step-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .step-title {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.3;
+  }
+  .step-detail {
+    font-size: 13.5px;
+    color: var(--fg-muted);
+    line-height: 1.55;
+  }
+  .step .install { max-width: none; }
 
   .install {
     position: relative;
@@ -148,6 +233,7 @@
     align-items: center;
     gap: 14px;
     box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 20px 50px -20px rgba(0,0,0,0.6);
+    width: 100%;
     max-width: 560px;
   }
   .install::before {
@@ -328,15 +414,15 @@
     mask-position: center;
     mask-size: contain;
   }
-  /* svg-as-mask for nav icons */
-  .nav-item .i.gauge   { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='5.5' fill='none' stroke='black' stroke-width='1.5'/><line x1='8' y1='8' x2='11' y2='5.5' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
-  .nav-item .i.wave    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3 8 Q5 3 7 8 T11 8 T15 8' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
-  .nav-item .i.doc     { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 2h6l2 2v10H4z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/></svg>"); }
-  .nav-item .i.brain   { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='6' cy='8' r='3' fill='none' stroke='black' stroke-width='1.5'/><circle cx='10' cy='8' r='3' fill='none' stroke='black' stroke-width='1.5'/></svg>"); }
-  .nav-item .i.shield  { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 2l5 2v4c0 3-2.5 5-5 6-2.5-1-5-3-5-6V4z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/></svg>"); }
-  .nav-item .i.mic     { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><rect x='6' y='2' width='4' height='7' rx='2' fill='none' stroke='black' stroke-width='1.5'/><path d='M3 8v1a5 5 0 0010 0V8M8 14v-2' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
-  .nav-item .i.book    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M3 3h7a2 2 0 012 2v9H5a2 2 0 01-2-2z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/></svg>"); }
-  .nav-item .i.gear    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><circle cx='8' cy='8' r='2' fill='none' stroke='black' stroke-width='1.5'/><path d='M8 2v2M8 12v2M14 8h-2M4 8H2M12.2 3.8l-1.4 1.4M5.2 10.8L3.8 12.2M12.2 12.2l-1.4-1.4M5.2 5.2L3.8 3.8' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round'/></svg>"); }
+  /* svg-as-mask for nav icons — filled shapes matching the app's SF Symbol .fill variants */
+  .nav-item .i.gauge   { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M8 2a6 6 0 0 0-5.5 8.3l1.4-.6A4.5 4.5 0 0 1 8 3.5a4.5 4.5 0 0 1 4.1 6.3l1.4.6A6 6 0 0 0 8 2zm0 3.5a.6.6 0 0 0-.6.6v2.7a1 1 0 1 0 1.2 0V6.1A.6.6 0 0 0 8 5.5z' fill='black'/></svg>"); }
+  .nav-item .i.wave    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><g fill='black'><rect x='1.8' y='6.8' width='1.5' height='2.4' rx='.75'/><rect x='4.4' y='5' width='1.5' height='6' rx='.75'/><rect x='7' y='3' width='1.5' height='10' rx='.75'/><rect x='9.6' y='5' width='1.5' height='6' rx='.75'/><rect x='12.2' y='6.8' width='1.5' height='2.4' rx='.75'/></g></svg>"); }
+  .nav-item .i.doc     { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M4 2a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V6l-4-4H4zm5 1 3 3H9V3z' fill='black'/></svg>"); }
+  .nav-item .i.brain   { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M6.5 2.2a2.5 2.5 0 0 0-2.4 1.8 2 2 0 0 0-.9 3 2 2 0 0 0 1 3.3 2 2 0 0 0 2 2 2.5 2.5 0 0 0 2.3 1.5A.7.7 0 0 0 9 13V3.5a1.3 1.3 0 0 0-1.3-1.3h-1.2zM9.5 2.2a2.5 2.5 0 0 1 2.4 1.8 2 2 0 0 1 .9 3 2 2 0 0 1-1 3.3 2 2 0 0 1-2 2 2.5 2.5 0 0 1-2.3 1.5A.7.7 0 0 1 7 13V3.5a1.3 1.3 0 0 1 1.3-1.3h1.2z' fill='black'/></svg>"); }
+  .nav-item .i.shield  { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 1.5 2.5 3.5v5c0 3.3 2.3 6 5.5 6.5 3.2-.5 5.5-3.2 5.5-6.5v-5L8 1.5z' fill='black'/></svg>"); }
+  .nav-item .i.mic     { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 1.5a2.5 2.5 0 0 0-2.5 2.5v4a2.5 2.5 0 0 0 5 0V4A2.5 2.5 0 0 0 8 1.5zM4 7.5a.5.5 0 0 0-.5.5 4.5 4.5 0 0 0 4 4.47V14H5a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H8.5v-1.53A4.5 4.5 0 0 0 12.5 8a.5.5 0 0 0-1 0 3.5 3.5 0 0 1-7 0 .5.5 0 0 0-.5-.5z' fill='black'/></svg>"); }
+  .nav-item .i.book    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M5 2h7a.5.5 0 0 1 .5.5v11a.5.5 0 0 1-.5.5H5a1.5 1.5 0 0 1 0-3h6.5V2.5H5A1.5 1.5 0 0 0 3.5 4v8.5A1.5 1.5 0 0 0 5 14h7v1H5a2.5 2.5 0 0 1-2.5-2.5V4A2.5 2.5 0 0 1 5 1.5h.1a.5.5 0 0 1 0 .5z' fill='black'/></svg>"); }
+  .nav-item .i.gear    { mask-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill-rule='evenodd' d='M7.1 1.6a.8.8 0 0 1 1.8 0l.2 1.05a5 5 0 0 1 1.5.62l.9-.58a.8.8 0 0 1 1.2 1.2l-.58.9a5 5 0 0 1 .62 1.5L14 6.8a.8.8 0 0 1 0 1.4l-1.1.2a5 5 0 0 1-.62 1.5l.58.9a.8.8 0 0 1-1.2 1.2l-.9-.58a5 5 0 0 1-1.5.62L8.9 12.9a.8.8 0 0 1-1.8 0l-.2-1.05a5 5 0 0 1-1.5-.62l-.9.58a.8.8 0 0 1-1.2-1.2l.58-.9a5 5 0 0 1-.62-1.5L2 8.2a.8.8 0 0 1 0-1.4l1.1-.2a5 5 0 0 1 .62-1.5l-.58-.9a.8.8 0 0 1 1.2-1.2l.9.58a5 5 0 0 1 1.5-.62L7.1 1.6zM8 5.4a2.6 2.6 0 1 0 0 5.2 2.6 2.6 0 0 0 0-5.2z' fill='black'/></svg>"); }
 
   .nav-item.active {
     background: var(--yellow);
@@ -369,10 +455,10 @@
     line-height: 1.1;
   }
   .hero-banner .t2 strong {
-    font-family: var(--display);
-    font-weight: 400;
-    font-size: 26px;
-    letter-spacing: 0.01em;
+    font-family: var(--sans);
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: -0.015em;
   }
   .hero-banner .sub {
     font-size: 12px;
@@ -471,56 +557,31 @@
   .pill-wave path {
     fill: none;
     stroke: var(--yellow);
-    stroke-width: 2;
+    stroke-width: 2.2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    filter: drop-shadow(0 0 5px rgba(255, 219, 112, 0.55));
-    animation: wiggleInPlace 1.6s ease-in-out infinite, strokePulse 2.6s ease-in-out infinite;
+    filter: drop-shadow(0 0 4px rgba(255, 219, 112, 0.5));
+    animation: wiggleInPlace 3.2s ease-in-out infinite, strokePulse 3.2s ease-in-out infinite;
   }
 
-  /* Endpoints (x=0, x=96) stay at y=11. Interior control points move around. */
+  /* Endpoints (0,11) and (96,11) stay pinned. Smooth S-continuation curves between
+     4 interior control points — all tangents align, so the wave has no sharp corners. */
   @keyframes wiggleInPlace {
-    0%   { d: path("M 0 11 C 8 11, 16 5,  24 10, 32 15, 40 7,  48 11, 56 15, 64 6,  72 13, 80 9,  88 12, 96 11"); }
-    25%  { d: path("M 0 11 C 8 11, 16 14, 24 9,  32 5,  40 13, 48 11, 56 8,  64 15, 72 6,  80 14, 88 9,  96 11"); }
-    50%  { d: path("M 0 11 C 8 11, 16 7,  24 14, 32 9,  40 16, 48 11, 56 14, 64 8,  72 16, 80 6,  88 13, 96 11"); }
-    75%  { d: path("M 0 11 C 8 11, 16 13, 24 6,  32 14, 40 8,  48 11, 56 6,  64 13, 72 9,  80 15, 88 7,  96 11"); }
-    100% { d: path("M 0 11 C 8 11, 16 5,  24 10, 32 15, 40 7,  48 11, 56 15, 64 6,  72 13, 80 9,  88 12, 96 11"); }
+    0%   { d: path("M 0 11 C 12 11, 20 9, 32 11 S 52 13, 64 11 S 84 10, 96 11"); }
+    25%  { d: path("M 0 11 C 12 11, 20 13, 32 11 S 52 9, 64 11 S 84 12, 96 11"); }
+    50%  { d: path("M 0 11 C 12 11, 20 10, 32 11 S 52 12, 64 11 S 84 9, 96 11"); }
+    75%  { d: path("M 0 11 C 12 11, 20 12, 32 11 S 52 10, 64 11 S 84 13, 96 11"); }
+    100% { d: path("M 0 11 C 12 11, 20 9, 32 11 S 52 13, 64 11 S 84 10, 96 11"); }
   }
   @keyframes strokePulse {
-    0%, 100% { stroke-width: 1.8; filter: drop-shadow(0 0 3px rgba(255,219,112,0.4)); }
-    40%      { stroke-width: 2.6; filter: drop-shadow(0 0 8px rgba(255,219,112,0.7)); }
-    70%      { stroke-width: 2.2; filter: drop-shadow(0 0 5px rgba(255,219,112,0.55)); }
-  }
-
-  /* Ripple dots — two pairs, staggered so they feel event-driven */
-  .pill-ripple {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 6px;
-    height: 6px;
-    margin: -3px 0 0 -3px;
-    background: var(--yellow);
-    border-radius: 50%;
-    opacity: 0;
-  }
-  .pill-ripple.r1 { animation: rippleOut 1.7s ease-out infinite; animation-delay: 0.0s; }
-  .pill-ripple.r2 { animation: rippleOut 1.7s ease-out infinite reverse; animation-delay: 0.0s; }
-  .pill-ripple.r3 { animation: rippleOut 1.7s ease-out infinite; animation-delay: 0.6s; }
-  .pill-ripple.r4 { animation: rippleOut 1.7s ease-out infinite reverse; animation-delay: 0.6s; }
-  .pill-ripple.r5 { animation: rippleOut 1.7s ease-out infinite; animation-delay: 1.1s; }
-  .pill-ripple.r6 { animation: rippleOut 1.7s ease-out infinite reverse; animation-delay: 1.1s; }
-
-  @keyframes rippleOut {
-    0%   { opacity: 0;   transform: translateX(0)    scale(0.8); }
-    8%   { opacity: 0.7; transform: translateX(5px)  scale(1);   }
-    100% { opacity: 0;   transform: translateX(45px) scale(1.6); }
+    0%, 100% { stroke-width: 2;   filter: drop-shadow(0 0 3px rgba(255,219,112,0.4)); }
+    50%      { stroke-width: 2.4; filter: drop-shadow(0 0 5px rgba(255,219,112,0.6)); }
   }
 
   /* ── Footer ──────────────────────────────────────── */
   footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding-top: 20px;
     border-top: 1px solid var(--border);
@@ -570,8 +631,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .pill-wave svg, .pill-wave path, .pill-ripple { animation: none; }
-    .pill-ripple { display: none; }
+    .pill-wave svg, .pill-wave path { animation: none; }
   }
 </style>
 </head>
@@ -588,28 +648,6 @@
   <section class="hero">
     <h1 class="wordmark">Val<span class="accent">Voice</span></h1>
     <p class="tagline">Local-first dictation for macOS.<br>Hold Caps Lock, speak, release.</p>
-
-    <div class="install" role="region" aria-label="Install command">
-      <code id="install-cmd">curl -fsSL https://valvoice.app/install | bash</code>
-      <button class="copy-btn" id="copy-btn" aria-label="Copy install command">
-        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="4" width="9" height="9" rx="1.5"/>
-          <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
-        </svg>
-        <span>Copy</span>
-      </button>
-    </div>
-
-    <p class="helper">
-      Paste into Terminal.
-      Don't know where that is? <span class="kbd">⌘</span><span class="kbd">Space</span>, type <em>Terminal</em>, press <span class="kbd">↵</span>.
-    </p>
-
-    <ul class="features">
-      <li>100% offline</li>
-      <li>Press Caps Lock</li>
-      <li>Works everywhere on Mac</li>
-    </ul>
   </section>
 
   <!-- ───── Product showcase ────────────────────────── -->
@@ -693,27 +731,67 @@
       </div>
     </div>
 
-    <!-- Overlapping mini recorder — spline wiggling in place + ripple dots -->
+    <!-- Overlapping mini recorder — smooth spline wiggling in place -->
     <div class="pill" aria-hidden="true">
       <div class="pill-viz">
         <div class="pill-wave">
           <svg viewBox="0 0 96 22" preserveAspectRatio="none">
-            <!-- Path animates via CSS keyframes — endpoints stay pinned at (0,11) and (96,11) -->
-            <path d="M 0 11 C 8 11, 16 5, 24 10, 32 15, 40 7, 48 11, 56 15, 64 6, 72 13, 80 9, 88 12, 96 11" />
+            <path d="M 0 11 C 12 11, 20 9, 32 11 S 52 13, 64 11 S 84 10, 96 11" />
           </svg>
         </div>
-        <div class="pill-ripple r1"></div>
-        <div class="pill-ripple r2"></div>
-        <div class="pill-ripple r3"></div>
-        <div class="pill-ripple r4"></div>
-        <div class="pill-ripple r5"></div>
-        <div class="pill-ripple r6"></div>
       </div>
     </div>
   </section>
 
+  <!-- ───── How to download ─────────────────────────── -->
+  <section class="download" aria-label="How to install">
+    <div class="download-label">How to install</div>
+    <h2 class="download-heading">Three steps and you're dictating.</h2>
+
+    <ol class="steps">
+      <li class="step">
+        <div class="step-body">
+          <div class="step-title">Copy the install command</div>
+          <div class="install" role="region" aria-label="Install command">
+            <code id="install-cmd">curl -fsSL https://valvoice.app/install | bash</code>
+            <button class="copy-btn" id="copy-btn" aria-label="Copy install command">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="9" height="9" rx="1.5"/>
+                <path d="M3 11V3a1 1 0 0 1 1-1h8"/>
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="step-body">
+          <div class="step-title">Open Terminal</div>
+          <div class="step-detail">
+            Press <span class="kbd">⌘</span><span class="kbd">Space</span>, type <em>Terminal</em>, then press <span class="kbd">↵</span>.
+          </div>
+        </div>
+      </li>
+
+      <li class="step">
+        <div class="step-body">
+          <div class="step-title">Paste and run</div>
+          <div class="step-detail">
+            Press <span class="kbd">⌘</span><span class="kbd">V</span> to paste, then <span class="kbd">↵</span> to run. ValVoice installs itself and opens automatically.
+          </div>
+        </div>
+      </li>
+    </ol>
+
+    <ul class="features">
+      <li>100% offline</li>
+      <li>Press Caps Lock</li>
+      <li>Works everywhere on Mac</li>
+    </ul>
+  </section>
+
   <footer>
-    <span>GPL-3.0 · Fork of <a href="https://github.com/Beingpax/VoiceInk">VoiceInk</a></span>
     <a href="https://github.com/nicolaivalenta/valvoice">github.com/nicolaivalenta/valvoice</a>
   </footer>
 </main>
@@ -722,6 +800,9 @@
   (() => {
     const btn = document.getElementById('copy-btn');
     const cmd = document.getElementById('install-cmd');
+    if (location.protocol === 'https:' || location.protocol === 'http:') {
+      cmd.textContent = `curl -fsSL ${location.origin}/install.sh | bash`;
+    }
     const label = btn.querySelector('span');
     const svg = btn.querySelector('svg');
     const originalSVG = svg.innerHTML;
