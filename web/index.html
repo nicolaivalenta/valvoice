@@ -773,7 +773,7 @@
     <div class="compare">
       <div class="compare-card compare-keyboard">
         <div class="compare-meta">
-          <span class="compare-label">Keyboard</span>
+          <span class="compare-label">Typing</span>
           <span class="compare-number">45<em>wpm</em></span>
         </div>
         <svg class="compare-band" viewBox="0 0 220 532" preserveAspectRatio="none" aria-hidden="true">
@@ -781,10 +781,7 @@
             <path id="kb-curve" d="M 0 325 Q 110 295, 220 275" />
           </defs>
           <text>
-            <textPath href="#kb-curve" startOffset="0">
-              <animate attributeName="startOffset" from="-3500" to="0" dur="93.3s" repeatCount="indefinite"/>
-              Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.
-            </textPath>
+            <textPath href="#kb-curve" startOffset="0" data-rate="3.75"></textPath>
           </text>
         </svg>
       </div>
@@ -799,10 +796,7 @@
             <path id="vv-curve" d="M 0 270 Q 330 195, 660 330" />
           </defs>
           <text>
-            <textPath href="#vv-curve" startOffset="0">
-              <animate attributeName="startOffset" from="-3500" to="0" dur="19.1s" repeatCount="indefinite"/>
-              Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.
-            </textPath>
+            <textPath href="#vv-curve" startOffset="0" data-rate="18.33"></textPath>
           </text>
         </svg>
 
@@ -911,6 +905,81 @@
         sel.addRange(range);
       }
     });
+  })();
+
+  // Speed comparison: seamless marquee along curved textPaths.
+  // Measures one cycle's rendered length via SVG getSubStringLength() so
+  // the startOffset can wrap exactly — no visible snap at the loop.
+  // Six sample prompts are shuffled per page load so the content varies.
+  (() => {
+    const PROMPTS = [
+      "Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.",
+      "Can you write up a summary of the call today? Focus on three things. The timeline shift, who's taking over the billing integration, and that we're pausing the mobile work until we get more data. Keep it under a page and send it to the team by end of day.",
+      "I'm looking at a function that takes a user ID and returns a sorted list of their recent transactions. It's slow for accounts with lots of history. Can you walk me through what the function is doing and where the bottleneck might be? I suspect an N plus one query but I want to check.",
+      "Recap my last hour for me. I had a design sync at nine, then a one on one with Maya, then the go-to-market planning meeting. I want to remember the key decisions and who owns the follow-ups. Flag anything I need to respond to before end of day.",
+      "Can you draft a reply to the enterprise prospect who asked about SOC 2? Tell them we're in the middle of our audit and expect to be certified by Q3. In the meantime we can share our security whitepaper and walk them through our controls on a call. Keep it professional but warm.",
+      "I need to brainstorm names for the new product. Something that feels like the intersection of productivity and calm. Not corporate, maybe one or two syllables, something you'd say out loud without feeling silly. Give me ten options and rank them by how memorable they'd be."
+    ];
+
+    function shuffle(arr) {
+      const a = arr.slice();
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function init() {
+      const bands = document.querySelectorAll('.compare-band');
+      if (!bands.length) return;
+
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const cycleText = shuffle(PROMPTS).join(' ') + ' ';
+      const bufferText = reduced ? shuffle(PROMPTS)[0] : cycleText.repeat(3);
+
+      bands.forEach(svg => {
+        const tp = svg.querySelector('textPath');
+        if (tp) tp.textContent = bufferText;
+      });
+
+      if (reduced) return;
+
+      requestAnimationFrame(() => {
+        bands.forEach(svg => {
+          const tp = svg.querySelector('textPath');
+          if (!tp) return;
+
+          let cycleLength;
+          try {
+            cycleLength = tp.getSubStringLength(0, cycleText.length);
+          } catch (e) {
+            return;
+          }
+          if (!cycleLength || !isFinite(cycleLength)) return;
+
+          const rate = parseFloat(tp.dataset.rate || '5');
+          const cycleTime = cycleText.length / rate;
+          const startOffsetRandom = Math.random() * cycleTime * 1000;
+          let t0 = performance.now() - startOffsetRandom;
+
+          function tick(now) {
+            const elapsed = (now - t0) / 1000;
+            const progress = (elapsed / cycleTime) % 1;
+            const offset = -cycleLength + progress * cycleLength;
+            tp.setAttribute('startOffset', offset);
+            requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
+        });
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   })();
 </script>
 </body>
