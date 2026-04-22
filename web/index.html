@@ -567,11 +567,11 @@
   /* Endpoints (0,11) and (96,11) stay pinned. Smooth S-continuation curves between
      4 interior control points — all tangents align, so the wave has no sharp corners. */
   @keyframes wiggleInPlace {
-    0%   { d: path("M 0 11 C 12 11, 20 9, 32 11 S 52 13, 64 11 S 84 10, 96 11"); }
-    25%  { d: path("M 0 11 C 12 11, 20 13, 32 11 S 52 9, 64 11 S 84 12, 96 11"); }
-    50%  { d: path("M 0 11 C 12 11, 20 10, 32 11 S 52 12, 64 11 S 84 9, 96 11"); }
-    75%  { d: path("M 0 11 C 12 11, 20 12, 32 11 S 52 10, 64 11 S 84 13, 96 11"); }
-    100% { d: path("M 0 11 C 12 11, 20 9, 32 11 S 52 13, 64 11 S 84 10, 96 11"); }
+    0%   { d: path("M 0 11 C 12 11, 20 5, 32 11 S 52 17, 64 11 S 84 7, 96 11"); }
+    25%  { d: path("M 0 11 C 12 11, 20 17, 32 11 S 52 5, 64 11 S 84 15, 96 11"); }
+    50%  { d: path("M 0 11 C 12 11, 20 8, 32 11 S 52 15, 64 11 S 84 5, 96 11"); }
+    75%  { d: path("M 0 11 C 12 11, 20 15, 32 11 S 52 7, 64 11 S 84 17, 96 11"); }
+    100% { d: path("M 0 11 C 12 11, 20 5, 32 11 S 52 17, 64 11 S 84 7, 96 11"); }
   }
   @keyframes strokePulse {
     0%, 100% { stroke-width: 2;   filter: drop-shadow(0 0 3px rgba(255,219,112,0.4)); }
