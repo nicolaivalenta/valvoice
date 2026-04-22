@@ -1,66 +1,48 @@
 import SwiftUI
 
-/// ValVoice audio visualizer — each bar ripples on its own phase-offset sine wave,
-/// with the whole ensemble scaled by real microphone amplitude. Quiet → bars rest
-/// at a flat baseline; speaking → bars dance with their own rhythm.
-///
-/// This is the same visual language as the web landing page's mini-pill animation,
-/// but amplitude-driven so it reflects actual voice level instead of just looping.
+/// ValVoice audio visualizer — a single horizontal line that thickens and glows
+/// with your voice. Silent = a hairline wire. Speech = a bright, glowing beam.
+/// No pulses when quiet, no fake motion — just honest amplitude feedback.
 struct AudioVisualizer: View {
     let audioMeter: AudioMeter      // current snapshot (re-passed each render)
     let sampler: () -> Float        // re-evaluated live on each tick
     let color: Color
     let isActive: Bool
 
-    private let barCount = 15
-    private let barWidth: CGFloat = 3
-    private let barSpacing: CGFloat = 2.5
-    private let minHeight: CGFloat = 4
-    private let maxHeight: CGFloat = 28
+    // Line geometry
+    private let lineMinThickness: CGFloat = 2
+    private let lineMaxThickness: CGFloat = 9
+    private let lineWidth: CGFloat = 72
+    private let containerHeight: CGFloat = 28
 
-    @StateObject private var driver = RippleDriver()
+    @StateObject private var driver = AmplitudeDriver()
 
     var body: some View {
-        HStack(alignment: .center, spacing: barSpacing) {
-            ForEach(0..<barCount, id: \.self) { index in
-                Capsule()
-                    .fill(color.opacity(isActive ? 0.95 : 0.55))
-                    .frame(width: barWidth, height: barHeight(for: index))
-            }
-        }
-        .frame(height: maxHeight)
-        .onAppear { driver.start(sampler: sampler) }
-        .onDisappear { driver.stop() }
-        .onChange(of: isActive) { _, active in
-            if !active { driver.amplitude = 0 }
-        }
-    }
-
-    /// One bar's height = baseline + (amplitude × per-bar ripple).
-    /// The ripple is a phased sine so each bar breathes at its own rhythm.
-    private func barHeight(for index: Int) -> CGFloat {
-        // Noise gate: ambient room-tone below ~0.1 doesn't drive the bars.
+        // Amplitude 0..1, with noise gate and soft compression so quiet sounds don't trip it.
         let gated = max(0, driver.amplitude - 0.08) / 0.92
-        // Soft compression so shouting doesn't just peg everything at max.
         let amp = CGFloat(pow(Double(gated), 0.55))
-        // Per-bar phase offset — 15 bars stepping through the sine at different points.
-        let phase = driver.phase + Double(index) * 0.42
-        // Compound sines layered for more organic, less regular motion.
-        let s1 = sin(phase)
-        let s2 = sin(phase * 1.7) * 0.5
-        let ripple = CGFloat(((s1 + s2) * 0.5 + 0.5))  // 0..1 (roughly)
-        // Blend a small always-on baseline so bars never freeze to a flat line mid-speech.
-        let intensity = amp * (0.35 + 0.65 * ripple)
-        let raw = minHeight + intensity * (maxHeight - minHeight)
-        return max(minHeight, min(maxHeight, raw))
+
+        let thickness = lineMinThickness + amp * (lineMaxThickness - lineMinThickness)
+        let glowRadius = 2 + amp * 10
+        let fill = color.opacity(isActive ? (0.55 + 0.45 * amp) : 0.35)
+
+        return Capsule()
+            .fill(fill)
+            .frame(width: lineWidth, height: thickness)
+            .shadow(color: color.opacity(isActive ? 0.55 * amp : 0), radius: glowRadius, x: 0, y: 0)
+            .frame(height: containerHeight)
+            .onAppear { driver.start(sampler: sampler) }
+            .onDisappear { driver.stop() }
+            .onChange(of: isActive) { _, active in
+                if !active { driver.amplitude = 0 }
+            }
     }
 }
 
-/// Ticks at 60 Hz, advancing the ripple phase and pulling the current amplitude.
-/// Publishing triggers a SwiftUI redraw on the visualizer every frame.
-final class RippleDriver: ObservableObject {
+/// Ticks at 60 Hz, pulling current amplitude with attack/decay smoothing so the
+/// line feels responsive on voice onset and relaxes gently when quiet.
+final class AmplitudeDriver: ObservableObject {
     @Published var amplitude: Float = 0
-    @Published var phase: Double = 0
 
     private var sampler: (() -> Float)?
     private var timer: Timer?
@@ -71,16 +53,13 @@ final class RippleDriver: ObservableObject {
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
             guard let self, let sampler = self.sampler else { return }
-            // Attack/decay smoothing: follow up fast, release slow — feels like speech.
             let raw = max(0, min(1, sampler()))
+            // Fast attack (voice onset snaps the line thicker), slow decay (quiet fades softly).
             let next: Float = raw > self.previous
                 ? self.previous + (raw - self.previous) * 0.55
-                : self.previous + (raw - self.previous) * 0.12
+                : self.previous + (raw - self.previous) * 0.1
             self.previous = next
             self.amplitude = next
-            // Phase advances steadily; speed picks up slightly with amplitude so loud speech
-            // ripples faster than quiet speech.
-            self.phase += 0.26 + Double(next) * 0.2
         }
     }
 
@@ -92,23 +71,15 @@ final class RippleDriver: ObservableObject {
     }
 }
 
-/// Flat bars shown when the recorder is idle (no audio input)
+/// Idle state — a dim hairline wire, matching the active visualizer's resting form.
 struct StaticVisualizer: View {
-    private let barCount = 9
-    private let barWidth: CGFloat = 3.5
-    private let barHeight: CGFloat = 5
-    private let barSpacing: CGFloat = 3
     let color: Color
 
     var body: some View {
-        HStack(spacing: barSpacing) {
-            ForEach(0..<barCount, id: \.self) { _ in
-                Capsule()
-                    .fill(color.opacity(0.5))
-                    .frame(width: barWidth, height: barHeight)
-            }
-        }
-        .frame(height: 28)
+        Capsule()
+            .fill(color.opacity(0.35))
+            .frame(width: 72, height: 2)
+            .frame(height: 28)
     }
 }
 
