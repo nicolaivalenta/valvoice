@@ -84,6 +84,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 24px; /* preserve layout space even when empty */
   }
   .brand-small {
     display: flex;
@@ -678,13 +679,7 @@
 </head>
 <body>
 <main class="page">
-  <header>
-    <div class="brand-small">
-      <div class="tile">V</div>
-      <span>ValVoice</span>
-    </div>
-    <a href="https://github.com/nicolaivalenta/valvoice" aria-label="View source on GitHub">View on GitHub →</a>
-  </header>
+  <header aria-hidden="true"></header>
 
   <section class="hero">
     <h1 class="wordmark">Val<span class="accent">Voice</span></h1>
