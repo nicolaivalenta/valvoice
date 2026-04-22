@@ -1,14 +1,14 @@
 import SwiftUI
 
-/// ValVoice audio visualizer — a rolling amplitude history rendered as capsule bars.
+/// ValVoice audio visualizer — each bar ripples on its own phase-offset sine wave,
+/// with the whole ensemble scaled by real microphone amplitude. Quiet → bars rest
+/// at a flat baseline; speaking → bars dance with their own rhythm.
 ///
-/// Instead of bars that sway on a pure sine wave (the previous design felt fake
-/// because the motion was time-driven, not audio-driven), each bar shows a slice
-/// of the actual amplitude history. New samples enter on the right, old samples
-/// scroll left — an oscilloscope-style waveform that genuinely responds to voice.
+/// This is the same visual language as the web landing page's mini-pill animation,
+/// but amplitude-driven so it reflects actual voice level instead of just looping.
 struct AudioVisualizer: View {
     let audioMeter: AudioMeter      // current snapshot (re-passed each render)
-    let sampler: () -> Float        // called by the buffer on each tick to read live amplitude
+    let sampler: () -> Float        // re-evaluated live on each tick
     let color: Color
     let isActive: Bool
 
@@ -18,7 +18,7 @@ struct AudioVisualizer: View {
     private let minHeight: CGFloat = 4
     private let maxHeight: CGFloat = 28
 
-    @StateObject private var buffer = AmplitudeBuffer(capacity: 15)
+    @StateObject private var driver = RippleDriver()
 
     var body: some View {
         HStack(alignment: .center, spacing: barSpacing) {
@@ -26,59 +26,69 @@ struct AudioVisualizer: View {
                 Capsule()
                     .fill(color.opacity(isActive ? 0.95 : 0.55))
                     .frame(width: barWidth, height: barHeight(for: index))
-                    .animation(.spring(response: 0.28, dampingFraction: 0.72), value: buffer.samples[index])
             }
         }
         .frame(height: maxHeight)
-        .onAppear { buffer.start(sampler: sampler) }
-        .onDisappear { buffer.stop() }
+        .onAppear { driver.start(sampler: sampler) }
+        .onDisappear { driver.stop() }
         .onChange(of: isActive) { _, active in
-            if !active { buffer.resetToSilent() }
+            if !active { driver.amplitude = 0 }
         }
     }
 
+    /// One bar's height = baseline + (amplitude × per-bar ripple).
+    /// The ripple is a phased sine so each bar breathes at its own rhythm.
     private func barHeight(for index: Int) -> CGFloat {
-        // Boost low amplitudes so quiet speech still moves the bars visibly
-        let sample = CGFloat(max(0, min(1, pow(buffer.samples[index], 0.55))))
-        // Center bars slightly taller — gives the visualizer a subtle "focus"
-        let centerDist = abs(Double(index) - Double(barCount - 1) / 2) / Double(barCount / 2)
-        let weight = 1.0 - centerDist * 0.22
-        let raw = minHeight + sample * CGFloat(weight) * (maxHeight - minHeight)
-        return max(minHeight, raw)
+        // Noise gate: ambient room-tone below ~0.1 doesn't drive the bars.
+        let gated = max(0, driver.amplitude - 0.08) / 0.92
+        // Soft compression so shouting doesn't just peg everything at max.
+        let amp = CGFloat(pow(Double(gated), 0.55))
+        // Per-bar phase offset — 15 bars stepping through the sine at different points.
+        let phase = driver.phase + Double(index) * 0.42
+        // Compound sines layered for more organic, less regular motion.
+        let s1 = sin(phase)
+        let s2 = sin(phase * 1.7) * 0.5
+        let ripple = CGFloat(((s1 + s2) * 0.5 + 0.5))  // 0..1 (roughly)
+        // Blend a small always-on baseline so bars never freeze to a flat line mid-speech.
+        let intensity = amp * (0.35 + 0.65 * ripple)
+        let raw = minHeight + intensity * (maxHeight - minHeight)
+        return max(minHeight, min(maxHeight, raw))
     }
 }
 
-/// Rolling amplitude history. Ticks at 20 Hz, shifting new samples in on the right.
-final class AmplitudeBuffer: ObservableObject {
-    @Published var samples: [Float]
-    private let capacity: Int
-    private var timer: Timer?
-    private var sampler: (() -> Float)?
+/// Ticks at 60 Hz, advancing the ripple phase and pulling the current amplitude.
+/// Publishing triggers a SwiftUI redraw on the visualizer every frame.
+final class RippleDriver: ObservableObject {
+    @Published var amplitude: Float = 0
+    @Published var phase: Double = 0
 
-    init(capacity: Int) {
-        self.capacity = capacity
-        self.samples = Array(repeating: 0, count: capacity)
-    }
+    private var sampler: (() -> Float)?
+    private var timer: Timer?
+    private var previous: Float = 0
 
     func start(sampler: @escaping () -> Float) {
         self.sampler = sampler
         timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
             guard let self, let sampler = self.sampler else { return }
-            var s = self.samples
-            s.removeFirst()
-            s.append(max(0, min(1, sampler())))
-            self.samples = s
+            // Attack/decay smoothing: follow up fast, release slow — feels like speech.
+            let raw = max(0, min(1, sampler()))
+            let next: Float = raw > self.previous
+                ? self.previous + (raw - self.previous) * 0.55
+                : self.previous + (raw - self.previous) * 0.12
+            self.previous = next
+            self.amplitude = next
+            // Phase advances steadily; speed picks up slightly with amplitude so loud speech
+            // ripples faster than quiet speech.
+            self.phase += 0.26 + Double(next) * 0.2
         }
     }
 
     func stop() {
         timer?.invalidate()
         timer = nil
-    }
-
-    func resetToSilent() {
-        samples = Array(repeating: 0, count: capacity)
+        amplitude = 0
+        previous = 0
     }
 }
 
