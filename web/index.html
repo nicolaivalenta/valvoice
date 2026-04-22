@@ -434,37 +434,28 @@
     color: var(--fg-muted);
     text-transform: lowercase;
   }
-  .compare-text-track {
+  /* Shared SVG band overlays both cards — text flows along a single curve,
+     so Keyboard and ValVoice sides automatically line up. Each text
+     element has its own startOffset animation (different speeds). */
+  .compare-band {
     position: absolute;
     top: 58%;
     left: 0;
     right: 0;
-    height: 62px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    transform: rotate(-3deg);
+    height: 90px;
+    width: 100%;
     pointer-events: none;
     z-index: 1;
-    mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 8%, #000 92%, transparent 100%);
+    transform: translateY(-50%);
+    mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 4%, #000 96%, transparent 100%);
   }
-  .compare-text {
-    display: flex;
-    white-space: nowrap;
+  .compare-band text {
     font-family: var(--sans);
-    font-size: clamp(14px, 1.7vw, 20px);
+    font-size: 19px;
     font-weight: 400;
-    color: rgba(255, 255, 255, 0.78);
+    fill: rgba(255, 255, 255, 0.78);
     letter-spacing: -0.005em;
-    will-change: transform;
-  }
-  .compare-text span { padding-right: 64px; }
-  .compare-keyboard .compare-text { animation: marquee 80s linear infinite; }   /* 60 words ÷ 80s × 60 = 45 wpm */
-  .compare-valvoice .compare-text { animation: marquee 16.4s linear infinite; } /* 60 words ÷ 16.4s × 60 = 220 wpm */
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
   }
   .compare-valvoice .pill {
     top: 50%;
@@ -788,24 +779,12 @@
           <span class="compare-label">Keyboard</span>
           <span class="compare-number">45<em>wpm</em></span>
         </div>
-        <div class="compare-text-track" aria-hidden="true">
-          <div class="compare-text">
-            <span>Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep. Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it. Onboarding, retention, and pricing.</span>
-            <span>Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep. Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it. Onboarding, retention, and pricing.</span>
-          </div>
-        </div>
       </div>
 
       <div class="compare-card compare-valvoice">
         <div class="compare-meta">
-          <span class="compare-label">ValVoice</span>
+          <span class="compare-label">Speaking</span>
           <span class="compare-number">220<em>wpm</em></span>
-        </div>
-        <div class="compare-text-track" aria-hidden="true">
-          <div class="compare-text">
-            <span>Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep. Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it. Onboarding, retention, and pricing.</span>
-            <span>Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep. Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it. Onboarding, retention, and pricing.</span>
-          </div>
         </div>
 
         <div class="pill" aria-hidden="true">
@@ -818,6 +797,26 @@
           </div>
         </div>
       </div>
+
+      <svg class="compare-band" viewBox="0 0 880 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs>
+          <!-- Two curves that meet at the card boundary, forming one continuous arc -->
+          <path id="kb-curve" d="M 0 52 Q 110 44, 220 38" />
+          <path id="vv-curve" d="M 230 38 Q 555 18, 900 48" />
+        </defs>
+        <text>
+          <textPath href="#kb-curve" startOffset="0">
+            <animate attributeName="startOffset" from="0" to="-3200" dur="80s" repeatCount="indefinite"/>
+            Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.
+          </textPath>
+        </text>
+        <text>
+          <textPath href="#vv-curve" startOffset="0">
+            <animate attributeName="startOffset" from="0" to="-3200" dur="16.4s" repeatCount="indefinite"/>
+            Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.     Hey, can you draft a quick email to the team letting them know we're pushing tomorrow's standup to ten because of the demo prep? Keep it friendly. Mention we're still tracking toward the milestone and thanks for being flexible. Also, can you start a new doc called Q2 priorities and put three bullets in it? Onboarding, retention, and pricing.
+          </textPath>
+        </text>
+      </svg>
     </div>
   </section>
 
